@@ -5,7 +5,7 @@ syntax = "proto3";
 
 
 package proto;
-option go_package = "github.com/headend/iptv-monitor-service/proto";
+option go_package = "github.com/headend/iptv-logging-service/proto";
 
 message MonitorLogs {
     int64 id = 1 [json_name = "id"];
@@ -50,11 +50,12 @@ message MonitorLogs {
 }
 
 message MonitorLogsFilter {
-    int64 agent_id = 1 [json_name = "agent_id"];
-    int64 profile_id = 2 [json_name = "profile_id"];
-    int64 monitor_id = 3 [json_name = "monitor_id"];
-    int64 channel_id = 4 [json_name = "channel_id"];
-    string multicast_ip = 5 [json_name = "multicast_ip"];
+    int64 id = 1 [json_name = "id"];
+    int64 agent_id = 2 [json_name = "agent_id"];
+    int64 profile_id = 3 [json_name = "profile_id"];
+    int64 monitor_id = 4 [json_name = "monitor_id"];
+    int64 channel_id = 5 [json_name = "channel_id"];
+    string multicast_ip = 6 [json_name = "multicast_ip"];
 }
 
 message MonitorLogsGetAll {

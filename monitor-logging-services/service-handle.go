@@ -2,47 +2,47 @@ package monitor_logging_services
 
 import (
 	"context"
-	"fmt"
-	monitor_loggingpb "github.com/headend/iptv-monitor-service/proto"
-	"github.com/headend/iptv-monitor-service/model"
-	"github.com/jinzhu/gorm"
+	monitor_loggingpb "github.com/headend/iptv-logging-service/proto"
+	"github.com/headend/iptv-logging-service/model"
 	"google.golang.org/grpc/status"
 	"log"
 	"time"
 )
 
 
-func (c *monitorServerService) Gets(ctx context.Context, in *monitorpb.MonitorGetAll) (*monitorpb.MonitorResponse, error) {
-	var monitorList []*model.Monitor
-	err := c.DB.Db.Find(&monitorList).Error
+func (c *monitorLoggingServerService) Gets(ctx context.Context, in *monitor_loggingpb.MonitorLogsGetAll) (*monitor_loggingpb.MonitorLogsResponse, error) {
+	var monitorLogList []*model.MonitorLogs
+	err := c.DB.Db.Find(&monitorLogList).Error
 	if err != nil {
 		return nil, err
 	}
-	var res []*monitorpb.Monitor
-	for _, tmp := range monitorList	{
-		monitor := ConvertModelToProtoType(tmp)
+	var res []*monitor_loggingpb.MonitorLogs
+	for _, tmp := range monitorLogList{
+		monitor := ConvertModelToProtoType(*tmp)
 		res = append(res, &monitor)
 	}
-	result := monitorpb.MonitorResponse{
-		Status: monitorpb.MonitorResponseStatus_SUCCESS,
-		Monitors: res,
+	result := monitor_loggingpb.MonitorLogsResponse{
+		Status: monitor_loggingpb.MonitorLogsResponseStatus_SUCCESS,
+		MonitorLogs: res,
 	}
 	return &result, nil
 }
 
-func (c *monitorServerService) Get(ctx context.Context, in *monitorpb.MonitorFilter) (*monitorpb.MonitorResponse, error) {
-	var monitors []*model.Monitor
+func (c *monitorLoggingServerService) Get(ctx context.Context, in *monitor_loggingpb.MonitorLogsFilter) (*monitor_loggingpb.MonitorLogsResponse, error) {
+	var monitorLogs []*model.MonitorLogs
 	mcase := matchFilterCase(in)
 	var err error
 	switch mcase {
-	case 1:
-		err = c.DB.Db.Where("id = ?", in.Id).Find(&monitors).Error
-	case 23:
-		err = c.DB.Db.Where("agent_id = : AND profile_id = ?", in.AgentId, in.ProfileId).Find(&monitors).Error
 	case 2:
-		err = c.DB.Db.Where("agent_id = ?", in.AgentId).Find(&monitors).Error
+		err = c.DB.Db.Where("agent_id = ?", in.AgentId).Find(&monitorLogs).Error
 	case 3:
-		err = c.DB.Db.Where("profile_id = ?", in.ProfileId).Find(&monitors).Error
+		err = c.DB.Db.Where("profile_id = ?", in.ProfileId).Find(&monitorLogs).Error
+	case 4:
+		err = c.DB.Db.Where("monitor_id = ?", in.MonitorId).Find(&monitorLogs).Error
+	case 5:
+		err = c.DB.Db.Where("channel_id = ?", in.ChannelId).Find(&monitorLogs).Error
+	case 6:
+		err = c.DB.Db.Where("multicast_ip = ?", in.MulticastIp).Find(&monitorLogs).Error
 	default:
 		log.Printf("Exeption on %#v", in)
 		return nil,nil
@@ -51,141 +51,90 @@ func (c *monitorServerService) Get(ctx context.Context, in *monitorpb.MonitorFil
 	if err != nil {
 		return nil, err
 	}
-	var res [] *monitorpb.Monitor
+	var res [] *monitor_loggingpb.MonitorLogs
 
-	for _,tmp := range monitors {
-		monitor := ConvertModelToProtoType(tmp)
-		res = append(res, &monitor)
+	for _,tmp := range monitorLogs {
+		monitorLog := ConvertModelToProtoType(*tmp)
+		res = append(res, &monitorLog)
 	}
-	result := monitorpb.MonitorResponse{
-		Status: monitorpb.MonitorResponseStatus_SUCCESS,
-		Monitors: res,
+	result := monitor_loggingpb.MonitorLogsResponse{
+		Status: monitor_loggingpb.MonitorLogsResponseStatus_SUCCESS,
+		MonitorLogs: res,
 	}
 	return &result, nil
 }
 
-func (c *monitorServerService) Add(ctx context.Context, in *monitorpb.MonitorRequest) (*monitorpb.MonitorResponse, error) {
-	log.Println("params in: %v", in)
-	notFound := c.DB.Db.Where("agent_id = : AND profile_id = ?", in.AgentId, in.ProfileId).RecordNotFound()
-	if !notFound {
-		err := fmt.Errorf("Agent is available! %#v", in)
-		log.Println(err)
-		return &monitorpb.MonitorResponse{
-			Status: monitorpb.MonitorResponseStatus_FAIL,
-			Monitors: nil,
-		}, status.Errorf(409, "Confilic %s", err.Error())
+func (c *monitorLoggingServerService) Add(ctx context.Context, in *monitor_loggingpb.MonitorLogsRequest) (*monitor_loggingpb.MonitorLogsResponse, error) {
+	//log.Println("params in: %v", in)
+	monitorLogModel := model.MonitorLogs{
+		AgentID:            in.AgentId,
+		ProfileID:          in.ProfileId,
+		MonitorID:          in.MonitorId,
+		ChannelID:          in.ChannelId,
+		ChannelName:        in.ChannelName,
+		MulticastIP:        in.MulticastIp,
+		BeforeStatus:       in.BeforeStatus,
+		BeforeSignalStatus: in.BeforeSignalStatus,
+		BeforeVideoStatus:  in.BeforeVideoStatus,
+		BeforeAudioStatus:  in.BeforeAudioStatus,
+		AfterStatus:        in.AfterStatus,
+		AfterSignalStatus:  in.AfterSignalStatus,
+		AfterVideoStatus:   in.AfterVideoStatus,
+		AfterAudioStatus:   in.AfterAudioStatus,
+		Description:        in.Description,
 	}
-	monitorModel := monitorpb.Monitor{
-		Id:            in.Id,
-		StatusSignal:  in.StatusSignal,
-		StatusVideo:   in.StatusVideo,
-		StatusAudio:   in.StatusAudio,
-		SignalMonitor: in.SignalMonitor,
-		VideoMonitor:  in.VideoMonitor,
-		AudioMonitor:  in.AudioMonitor,
-		IsEnable:      in.IsEnable,
-		AgentId:       in.AgentId,
-		ProfileId:     in.ProfileId,
-		StatusId:      in.StatusId,
-	}
-	var monitorProto monitorpb.Monitor
-	err := c.DB.Db.Create(&monitorModel).Updates(map[string]interface{}{"date_create": time.Now(), "date_update": time.Now()}).Scan(&monitorProto).Error
+	var monitorLogProto monitor_loggingpb.MonitorLogs
+	err := c.DB.Db.Create(&monitorLogModel).Updates(map[string]interface{}{"date_create": time.Now()}).Scan(&monitorLogProto).Error
 	if err == nil {
-		var res []*monitorpb.Monitor
-		res = append(res, &monitorProto)
-		return &monitorpb.MonitorResponse{Status: monitorpb.MonitorResponseStatus_SUCCESS, Monitors:res}, nil
+		var res []*monitor_loggingpb.MonitorLogs
+		res = append(res, &monitorLogProto)
+		return &monitor_loggingpb.MonitorLogsResponse{Status: monitor_loggingpb.MonitorLogsResponseStatus_SUCCESS, MonitorLogs:res}, nil
 	} else {
 		log.Print(err)
-		return &monitorpb.MonitorResponse{Status: monitorpb.MonitorResponseStatus_FAIL}, status.Errorf(409, "Confilic %s", err.Error())
+		return &monitor_loggingpb.MonitorLogsResponse{Status: monitor_loggingpb.MonitorLogsResponseStatus_FAIL}, status.Errorf(409, "Confilic %s", err.Error())
 	}
 
 }
 
-func (c *monitorServerService) Update(ctx context.Context, in *monitorpb.MonitorRequest) (*monitorpb.MonitorResponse, error) {
-	var oldMonitorModel model.Monitor
-	var err error
+func matchFilterCase(in *monitor_loggingpb.MonitorLogsFilter) (uint8) {
 
-	if in.Id != 0 {
-		err = c.DB.Db.Where("id = ?", in.Id).First(&oldMonitorModel).Error
-	} else {
-		err = c.DB.Db.Where("agent_id = : AND profile_id = ?", in.AgentId, in.ProfileId).First(&oldMonitorModel).Error
-	}
-	if err != nil {
-		// Return not found if DB response notfound err
-		if gorm.IsRecordNotFoundError(err) {
-			return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(404, "Not found")
-		}
-		// Return err
-		return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(500, "Internal server error")
-	}
-	// Return not found if can not found agent
-	if oldMonitorModel == (model.Monitor{}) {
-		return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(404, "Not found")
-	}
-
-	return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Errorf(403, "Not support")
-}
-
-func (c *monitorServerService) Delete(ctx context.Context, in *monitorpb.MonitorDelete) (*monitorpb.MonitorResponse, error) {
-	var monitorModel model.Monitor
-	var err error
-
-	err = c.DB.Db.Where("id = ?", in.Id).First(&monitorModel).Error
-	if err != nil {
-		// Return not found if DB response notfound err
-		if gorm.IsRecordNotFoundError(err) {
-			return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(404, "Not found")
-		}
-		// Return err
-		return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(500, "Internal server error")
-	}
-	// Return not found if can not found agent
-	if monitorModel == (model.Monitor{}) {
-		return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(404, "Not found")
-	}
-	err2 := c.DB.Db.Delete(&monitorModel).GetErrors()
-	var res []* monitorpb.Monitor
-	tmp := ConvertModelToProtoType(&monitorModel)
-	res = append(res, &tmp)
-	if len(err2) == 0 {
-		return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_SUCCESS, Monitors:res}, nil
-	} else {
-		log.Print(err2)
-		return &monitorpb.MonitorResponse{Status:monitorpb.MonitorResponseStatus_FAIL}, status.Error(500, "Internal server error")
-	}
-}
-
-func ConvertModelToProtoType(tmp *model.Monitor) monitorpb.Monitor {
-	monitor := monitorpb.Monitor{
-		Id : tmp.Id,
-		StatusSignal : tmp.Status_signal,
-		StatusVideo : tmp.Status_video,
-		StatusAudio : tmp.Status_audio,
-		SignalMonitor : tmp.Signal_monitor,
-		VideoMonitor : tmp.Video_monitor,
-		AudioMonitor : tmp.Audio_monitor,
-		IsEnable : tmp.Is_enable,
-		DateUpdate : tmp.Date_update.String(),
-		AgentId : tmp.Agent_id,
-		ProfileId : tmp.Profile_id,
-		StatusId : tmp.Status_id,
-	}
-	return monitor
-}
-
-func matchFilterCase(in *monitorpb.MonitorFilter) (uint8) {
-
-	if in.Id != 0 {
-		return 1
-	}
-	if in.ProfileId != 0 && in.ProfileId != 0 {
-		return 23
-	}
 	if in.AgentId != 0 {
 		return 2
 	}
 	if in.ProfileId != 0 {
 		return 3
 	}
+	if in.MonitorId != 0 {
+		return 4
+	}
+	if in.ChannelId != 0 {
+		return 5
+	}
+	if in.MulticastIp != "" {
+		return 6
+	}
 	return 0
+}
+
+func ConvertModelToProtoType(logModel model.MonitorLogs) (logPb monitor_loggingpb.MonitorLogs) {
+	result := monitor_loggingpb.MonitorLogs{
+		Id:                 logModel.Id,
+		AgentId:            logModel.AgentID,
+		ProfileId:          logModel.ProfileID,
+		MonitorId:          logModel.ProfileID,
+		ChannelId:          logModel.ChannelID,
+		ChannelName:        logModel.ChannelName,
+		MulticastIp:        logModel.MulticastIP,
+		BeforeStatus:       logModel.BeforeStatus,
+		BeforeSignalStatus: logModel.BeforeSignalStatus,
+		BeforeVideoStatus:  logModel.BeforeVideoStatus,
+		BeforeAudioStatus:  logModel.BeforeAudioStatus,
+		AfterStatus:        logModel.AfterStatus,
+		AfterSignalStatus:  logModel.AfterSignalStatus,
+		AfterVideoStatus:   logModel.AfterVideoStatus,
+		AfterAudioStatus:   logModel.AfterAudioStatus,
+		Description:        logModel.Description,
+		DateCreate:         logModel.DateCreate.String(),
+	}
+	return result
 }

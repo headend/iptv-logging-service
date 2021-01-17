@@ -46,6 +46,8 @@ github.com/headend/iptv-monitor-service v0.0.0-20201219075823-b7b90aeaa166/go.mo
 github.com/headend/share-module v0.0.0-20201219064024-aec69e082ab5/go.mod h1:dG5PsEogW+v822OBCrAW4ilBqZ9EFtEZ1IZYqEI7Op4=
 github.com/headend/share-module v0.0.0-20210106162716-8b466d222bbe h1:pk6iHlgwAeMbZFnW+rLaCWHYy/FtiXlN/Yc7A/3+zWE=
 github.com/headend/share-module v0.0.0-20210106162716-8b466d222bbe/go.mod h1:TU976y0Ri1JwpqqNC4IZUKnod9WwjwMNbOZbEnbqDbs=
+github.com/headend/share-module v0.0.0-20210117094858-42902111008b h1:GxUvwRYbTYnjAB33u0OQqYyOr1vTVy7FHm7b1w8Scfk=
+github.com/headend/share-module v0.0.0-20210117094858-42902111008b/go.mod h1:TU976y0Ri1JwpqqNC4IZUKnod9WwjwMNbOZbEnbqDbs=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jinzhu/gorm v1.9.16 h1:+IyIjPEABKRpsu/F8OvDPy9fyQlgsg2luMV2ZIH5i5o=
 github.com/jinzhu/gorm v1.9.16/go.mod h1:G3LB3wezTOWM2ITLzPxEXgSkOXAntiLHS7UdBefADcs=

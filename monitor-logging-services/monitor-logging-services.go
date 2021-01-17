@@ -2,6 +2,7 @@ package monitor_logging_services
 
 import (
 	"fmt"
+	"github.com/headend/iptv-logging-service/model"
 	monitor_loggingpb "github.com/headend/iptv-logging-service/proto"
 	"github.com/headend/share-module/configuration"
 	database "github.com/headend/share-module/databases"
@@ -27,8 +28,12 @@ func StartServer()  {
 	if db.Err != nil {
 		log.Fatal("Cannot connect DB: " + db.Err.Error())
 	}
-
-	listenerAdd := fmt.Sprintf("%s:%d", config.RPC.AgentMonitor.Host, config.RPC.AgentMonitor.Port)
+	// auto migrate data
+	err2 := db.Db.AutoMigrate(model.MonitorLogs{}).Error
+	if err2 != nil {
+		panic(err2)
+	}
+	listenerAdd := fmt.Sprintf("%s:%d", config.RPC.Logging.Host, config.RPC.Logging.Port)
 	ln, err := net.Listen("tcp", listenerAdd)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
