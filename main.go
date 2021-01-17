@@ -1,7 +1,7 @@
 package main
 
 import (
-	monitor_logging_service "github.com/headend/iptv-logging-service/monitor-logging-service"
+	monitor_logging_service "github.com/headend/iptv-logging-service/monitor-logging-services"
 	"log"
 )
 

@@ -2,7 +2,7 @@ package monitor_logging_services
 
 import (
 	"fmt"
-	monitor_loggingpb "github.com/headend/iptv-monitor-service/proto"
+	monitor_loggingpb "github.com/headend/iptv-logging-service/proto"
 	"github.com/headend/share-module/configuration"
 	database "github.com/headend/share-module/databases"
 	"google.golang.org/grpc"
