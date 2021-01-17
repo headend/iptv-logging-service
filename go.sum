@@ -48,6 +48,8 @@ github.com/headend/share-module v0.0.0-20210106162716-8b466d222bbe h1:pk6iHlgwAe
 github.com/headend/share-module v0.0.0-20210106162716-8b466d222bbe/go.mod h1:TU976y0Ri1JwpqqNC4IZUKnod9WwjwMNbOZbEnbqDbs=
 github.com/headend/share-module v0.0.0-20210117094858-42902111008b h1:GxUvwRYbTYnjAB33u0OQqYyOr1vTVy7FHm7b1w8Scfk=
 github.com/headend/share-module v0.0.0-20210117094858-42902111008b/go.mod h1:TU976y0Ri1JwpqqNC4IZUKnod9WwjwMNbOZbEnbqDbs=
+github.com/headend/share-module v0.0.0-20210117151601-695ed34460a4 h1:wseBr8GKXlhNcYmi83BUDyz2S+j50UYSAjCQq4AJ/Xc=
+github.com/headend/share-module v0.0.0-20210117151601-695ed34460a4/go.mod h1:TU976y0Ri1JwpqqNC4IZUKnod9WwjwMNbOZbEnbqDbs=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/jinzhu/gorm v1.9.16 h1:+IyIjPEABKRpsu/F8OvDPy9fyQlgsg2luMV2ZIH5i5o=
 github.com/jinzhu/gorm v1.9.16/go.mod h1:G3LB3wezTOWM2ITLzPxEXgSkOXAntiLHS7UdBefADcs=

@@ -33,6 +33,8 @@ func (c *monitorLoggingServerService) Get(ctx context.Context, in *monitor_loggi
 	mcase := matchFilterCase(in)
 	var err error
 	switch mcase {
+	case 1:
+		err = c.DB.Db.Where("id = ?", in.AgentId).Find(&monitorLogs).Error
 	case 2:
 		err = c.DB.Db.Where("agent_id = ?", in.AgentId).Find(&monitorLogs).Error
 	case 3:
@@ -97,7 +99,9 @@ func (c *monitorLoggingServerService) Add(ctx context.Context, in *monitor_loggi
 }
 
 func matchFilterCase(in *monitor_loggingpb.MonitorLogsFilter) (uint8) {
-
+	if in.Id != 0 {
+		return 1
+	}
 	if in.AgentId != 0 {
 		return 2
 	}
