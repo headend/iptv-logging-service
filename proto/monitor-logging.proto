@@ -1,0 +1,96 @@
+syntax = "proto3";
+/**
+ * Agent related messages.
+ */
+
+
+package proto;
+option go_package = "github.com/headend/iptv-monitor-service/proto";
+
+message MonitorLogs {
+    int64 id = 1 [json_name = "id"];
+    int64 agent_id = 2 [json_name = "agent_id"];
+    int64 profile_id = 3 [json_name = "profile_id"];
+    int64 monitor_id = 4 [json_name = "monitor_id"];
+    int64 channel_id = 5 [json_name = "channel_id"];
+    string channel_name = 6 [json_name = "channel_name"];
+    string multicast_ip = 7 [json_name = "multicast_ip"];
+    int64 before_status = 8 [json_name = "before_status"];
+    bool before_signal_status = 9 [json_name = "before_signal_status"];
+    bool before_video_status = 10 [json_name = "before_video_status"];
+    bool before_audio_status = 11 [json_name = "before_audio_status"];
+    int64 after_status = 12 [json_name = "after_status"];
+    bool after_signal_status = 13 [json_name = "after_signal_status"];
+    bool after_video_status = 14 [json_name = "after_video_status"];
+    bool after_audio_status = 15 [json_name = "after_audio_status"];
+    string description = 16 [json_name = "description"];
+    string date_create = 17 [json_name = "date_create"];
+}
+
+/**
+ * Represents the params to identify monitor.
+ */
+ message MonitorLogsRequest {
+    int64 agent_id = 1 [json_name = "agent_id"];
+    int64 profile_id = 2 [json_name = "profile_id"];
+    int64 monitor_id = 3 [json_name = "monitor_id"];
+    int64 channel_id = 4 [json_name = "channel_id"];
+    string channel_name = 5 [json_name = "channel_name"];
+    string multicast_ip = 6 [json_name = "multicast_ip"];
+    int64 before_status = 7 [json_name = "before_status"];
+    bool before_signal_status = 8 [json_name = "before_signal_status"];
+    bool before_video_status = 9 [json_name = "before_video_status"];
+    bool before_audio_status = 10 [json_name = "before_audio_status"];
+    int64 after_status = 11 [json_name = "after_status"];
+    bool after_signal_status = 12 [json_name = "after_signal_status"];
+    bool after_video_status = 13 [json_name = "after_video_status"];
+    bool after_audio_status = 14 [json_name = "after_audio_status"];
+    string description = 15 [json_name = "description"];
+    string date_create = 16 [json_name = "date_create"];
+}
+
+message MonitorLogsFilter {
+    int64 agent_id = 1 [json_name = "agent_id"];
+    int64 profile_id = 2 [json_name = "profile_id"];
+    int64 monitor_id = 3 [json_name = "monitor_id"];
+    int64 channel_id = 4 [json_name = "channel_id"];
+    string multicast_ip = 5 [json_name = "multicast_ip"];
+}
+
+message MonitorLogsGetAll {
+}
+
+message MonitorLogsResponse {
+    /**
+    * Status
+    */
+    MonitorLogsResponseStatus Status = 1 [json_name = "status"];
+    /**
+    * Slice of agent object
+    */
+    repeated MonitorLogs MonitorLogs = 2 [json_name = "data"];
+}
+
+enum MonitorLogsResponseStatus {
+    FAIL = 0; /// Success
+    SUCCESS = 1; /// Failed
+}
+
+service MonitorLogsService {
+    /**
+    * Get All Monitor Logs
+    */
+    rpc Gets (MonitorLogsGetAll) returns (MonitorLogsResponse){
+    }
+    /**
+    * Get Monitor Logs
+    */
+    rpc Get (MonitorLogsFilter) returns (MonitorLogsResponse){
+    }
+    /**
+    * Add Monitor Logs
+    */
+    rpc Add (MonitorLogsRequest) returns (MonitorLogsResponse) {
+    }
+}
+
