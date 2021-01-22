@@ -44,6 +44,7 @@ func StartServer()  {
 	if rpcServer == nil {
 		log.Fatalf("failed to register server: %v", err)
 	}
+	log.Printf("Server listen at: %s", listenerAdd)
 	if err := rpcServer.Serve(ln); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
