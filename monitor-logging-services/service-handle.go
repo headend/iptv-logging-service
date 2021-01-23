@@ -67,7 +67,7 @@ func (c *monitorLoggingServerService) Get(ctx context.Context, in *monitor_loggi
 }
 
 func (c *monitorLoggingServerService) Add(ctx context.Context, in *monitor_loggingpb.MonitorLogsRequest) (*monitor_loggingpb.MonitorLogsResponse, error) {
-	//log.Println("params in: %v", in)
+	log.Println("params in: %#v", in)
 	monitorLogModel := model.MonitorLogs{
 		AgentID:            in.AgentId,
 		ProfileID:          in.ProfileId,
